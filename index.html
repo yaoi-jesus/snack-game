@@ -1,0 +1,764 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#1c1c1c" />
+    <title>Snack Game • Your d20 snack bowls</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
+      :root {
+        --ink: #ededed;
+        --green: #242424;
+        --cream: #1c1c1c;
+        --muted: #a1a1a1;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--cream);
+        color: var(--ink);
+        font-family: "DM Sans", sans-serif;
+      }
+      button,
+      input {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+      }
+      button:focus-visible,
+      input:focus-visible {
+        outline: 3px solid #519bbd;
+        outline-offset: 3px;
+      }
+      header {
+        max-width: 1200px;
+        margin: auto;
+        padding: 27px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #363636;
+      }
+      .brand {
+        font-family: "Space Grotesk", sans-serif;
+        font-weight: 700;
+        font-size: 21px;
+      }
+      .brand span {
+        margin-right: 10px;
+      }
+      .tag {
+        font-size: 12px;
+        border: 1px solid #363636;
+        border-radius: 30px;
+        padding: 8px 12px;
+      }
+      main {
+        max-width: 1200px;
+        margin: auto;
+        padding: 22px 28px;
+      }
+      .hero {
+        display: flex;
+        justify-content: space-between;
+        gap: 25px;
+        align-items: center;
+      }
+      .eyebrow {
+        font-size: 11px;
+        letter-spacing: 2px;
+        font-weight: 700;
+        color: #519bbd;
+      }
+      h1 {
+        font-family: "Space Grotesk", sans-serif;
+        font-size: clamp(36px, 5vw, 58px);
+        letter-spacing: -2px;
+        line-height: 1.05;
+        margin: 15px 0;
+      }
+      h1 em {
+        font-style: normal;
+        color: #519bbd;
+      }
+      .intro {
+        color: #a1a1a1;
+        line-height: 1.6;
+        max-width: 480px;
+      }
+      .die {
+        background: #242424;
+        border: 1px solid #363636;
+        width: 140px;
+        height: 140px;
+        border-radius: 35px;
+        display: grid;
+        place-items: center;
+        transform: rotate(8deg);
+        font-size: 60px;
+        box-shadow: 8px 8px 0 #242424;
+      }
+      .panel {
+        margin: 0 0 28px;
+        background: var(--green);
+        color: white;
+        border-radius: 18px;
+        padding: 22px 25px;
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .panel h2 {
+        font-size: 17px;
+        margin: 0 0 5px;
+      }
+      .panel p {
+        font-size: 13px;
+        color: #b4b4b4;
+        margin: 0;
+      }
+      .roll {
+        display: flex;
+        gap: 8px;
+      }
+      .roll input {
+        width: 70px;
+        background: #ffffff18;
+        color: white;
+        border: 1px solid #ffffff50;
+        border-radius: 9px;
+        padding: 12px;
+        text-align: center;
+      }
+      .primary {
+        background: #519bbd;
+        color: #101a20;
+        border: 0;
+        border-radius: 9px;
+        padding: 12px 18px;
+        font-weight: 700;
+      }
+      .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+        margin: 30px 0 18px;
+      }
+      .toolbar h2 {
+        font-family: "Space Grotesk";
+        font-size: 23px;
+        margin: 0;
+      }
+      .count {
+        font-size: 13px;
+        color: var(--muted);
+        margin-top: 5px;
+      }
+      .actions {
+        display: flex;
+        gap: 7px;
+        flex-wrap: wrap;
+      }
+      .small {
+        border: 1px solid #404040;
+        background: transparent;
+        color: var(--ink);
+        padding: 9px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      .card {
+        background: #242424;
+        border: 1px solid #363636;
+        border-radius: 15px;
+        padding: 17px;
+        position: relative;
+        transition: 0.2s;
+      }
+      .card.empty {
+        background: #202020;
+        opacity: 0.78;
+      }
+      .card.selected {
+        outline: 3px solid #519bbd;
+        transform: translateY(-3px);
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .number {
+        font-family: "Space Grotesk";
+        font-weight: 700;
+        border: 1px solid #404040;
+        color: #83bdd8;
+        border-radius: 8px;
+        padding: 5px 9px;
+        font-size: 14px;
+      }
+      .status {
+        font-size: 10px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: #a1a1a1;
+      }
+      .emoji {
+        display: block;
+        width: 100%;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        text-align: center;
+        font-size: 37px;
+        margin: 13px 0 10px;
+      }
+      .name {
+        width: 100%;
+        text-align: center;
+        border: 0;
+        background: transparent;
+        color: var(--ink);
+        font-weight: 600;
+        padding: 7px 0;
+        border-bottom: 1px dashed #404040;
+      }
+      .name::placeholder {
+        color: #999999;
+        font-weight: 400;
+      }
+      .claim {
+        width: 100%;
+        margin-top: 13px;
+        padding: 9px;
+        border-radius: 8px;
+        border: 1px solid #404040;
+        background: #2c2c2c;
+        color: #ededed;
+        font-size: 12px;
+      }
+      .empty .claim {
+        background: transparent;
+      }
+      .footer {
+        margin-top: 25px;
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        color: #a1a1a1;
+        font-size: 12px;
+        line-height: 1.5;
+      }
+      .notice {
+        min-height: 22px;
+        color: #83bdd8;
+        font-size: 13px;
+        margin-top: 12px;
+      }
+      dialog {
+        border: 0;
+        border-radius: 22px;
+        background: #242424;
+        color: var(--ink);
+        width: min(90vw, 380px);
+        padding: 30px;
+        text-align: center;
+        box-shadow: 0 20px 80px #0003;
+      }
+      dialog::backdrop {
+        background: #0009;
+      }
+      .prize {
+        font-size: 58px;
+      }
+      dialog h2 {
+        font-family: "Space Grotesk";
+        font-size: 28px;
+        margin: 16px 0 10px;
+      }
+      dialog p {
+        color: #b4b4b4;
+        line-height: 1.5;
+      }
+      .dialog-actions {
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+      }
+      @media (max-width: 800px) {
+        .grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+        .die {
+          width: 105px;
+          height: 105px;
+          font-size: 45px;
+        }
+        .panel {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+        .toolbar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+      }
+      @media (max-width: 500px) {
+        header {
+          padding: 20px;
+        }
+        .tag {
+          font-size: 10px;
+        }
+        main {
+          padding: 30px 18px;
+        }
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 10px;
+        }
+        .card {
+          padding: 13px;
+        }
+        .die {
+          display: none;
+        }
+        .roll {
+          width: 100%;
+        }
+        .roll .primary {
+          flex: 1;
+        }
+        .footer {
+          flex-direction: column;
+          gap: 8px;
+        }
+        h1 {
+          letter-spacing: -1px;
+        }
+      }
+      .emoji-edit {
+        display: block;
+        margin: 0 auto 12px;
+        padding: 5px 10px;
+        border: 1px solid #404040;
+        border-radius: 6px;
+        background: transparent;
+        color: #b4b4b4;
+        font-size: 11px;
+      }
+      .emoji:hover,
+      .emoji-edit:hover {
+        color: #83bdd8;
+      }
+      .emoji-options {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        margin: 20px 0;
+      }
+      .emoji-options button {
+        font-size: 24px;
+        padding: 8px;
+        border: 1px solid #404040;
+        border-radius: 8px;
+        background: #2c2c2c;
+      }
+      .custom-emoji {
+        width: 100%;
+        margin: 10px 0 22px;
+        padding: 12px;
+        text-align: center;
+        font-size: 30px;
+        border: 1px solid #404040;
+        border-radius: 8px;
+        color: #ededed;
+        background: #1c1c1c;
+      }
+      button:hover {
+        filter: brightness(1.12);
+      }
+      :root {
+        color-scheme: dark;
+      }
+      main {
+        padding-top: 22px;
+      }
+      .panel {
+        margin-top: 0;
+        border: 1px solid #363636;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand"><span aria-hidden="true">🍬</span>Snack Game</div>
+    </header>
+    <main>
+      <section class="panel">
+        <div>
+          <h2>Pick your prize.</h2>
+          <p>Enter your d20 result, or roll one right here.</p>
+        </div>
+        <div class="roll">
+          <input
+            id="result"
+            type="number"
+            min="1"
+            max="20"
+            aria-label="d20 result"
+            placeholder="1–20"
+          /><button class="primary" id="reveal">Reveal</button
+          ><button class="primary" id="roll">Roll d20 ↗</button>
+        </div>
+      </section>
+      <section>
+        <div class="toolbar">
+          <div>
+            <h2>Snack List</h2>
+            <div class="count" id="count"></div>
+          </div>
+          <div class="actions">
+            <button class="small" id="export">↓ Export backup</button
+            ><button class="small" id="import">↑ Import</button
+            ><button class="small" id="reset">↻ Refill all bowls</button>
+          </div>
+        </div>
+        <div class="grid" id="grid"></div>
+        <div class="notice" id="notice" role="status" aria-live="polite"></div>
+      </section>
+      <div class="footer">
+        <span id="saved">● Saved on this device</span
+        ><span
+          >Use Edit emoji to change snack icons. Same browser, same stash.
+          Export a backup before clearing browser data.</span
+        >
+      </div>
+    </main>
+    <input type="file" id="file" accept="application/json,.json" hidden />
+    <dialog id="dialog">
+      <div class="prize" id="prizeEmoji"></div>
+      <div class="eyebrow" id="prizeNumber"></div>
+      <h2 id="prizeName"></h2>
+      <p id="prizeInfo"></p>
+      <div class="dialog-actions">
+        <button class="small" id="close">Close</button
+        ><button class="primary" id="win">Enjoy your snack ✓</button>
+      </div>
+    </dialog>
+    <dialog id="emojiDialog">
+      <h2>Choose an emoji</h2>
+      <p>Pick one below, or type or paste any emoji.</p>
+      <div class="emoji-options" id="emojiOptions"></div>
+      <label for="customEmoji">Your emoji</label>
+      <input
+        id="customEmoji"
+        class="custom-emoji"
+        maxlength="32"
+        autocomplete="off"
+      />
+      <div class="dialog-actions">
+        <button class="small" id="cancelEmoji">Cancel</button>
+        <button class="primary" id="saveEmoji">Save emoji</button>
+      </div>
+    </dialog>
+    <script>
+      const KEY = "snack-quest-v1",
+        icons = [
+          "🍪",
+          "🍬",
+          "🍫",
+          "🍿",
+          "🥨",
+          "🧁",
+          "🍭",
+          "🍩",
+          "🥜",
+          "🍓",
+          "🍘",
+          "🧃",
+          "🍪",
+          "🍬",
+          "🍫",
+          "🍿",
+          "🥨",
+          "🧁",
+          "🍭",
+          "🍩",
+        ];
+      const $ = (id) => document.getElementById(id);
+      let snacks = Array.from({ length: 20 }, (_, i) => ({
+          name: "",
+          emoji: icons[i],
+          empty: false,
+        })),
+        selected = -1,
+        storageOK = true;
+      function valid(a) {
+        return (
+          Array.isArray(a) &&
+          a.length === 20 &&
+          a.every(
+            (x) =>
+              x &&
+              typeof x.name === "string" &&
+              x.name.length <= 200 &&
+              typeof x.empty === "boolean" &&
+              typeof x.emoji === "string" &&
+              x.emoji.length <= 32,
+          )
+        );
+      }
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (raw) {
+          const a = JSON.parse(raw);
+          if (Array.isArray(a) && a.length === 20) {
+            const upgraded = a.map((x, i) => ({
+              name: x.name,
+              emoji: x.emoji ?? icons[i],
+              empty: x.empty ?? false,
+            }));
+            if (valid(upgraded)) snacks = upgraded;
+            else throw Error();
+          } else
+            $("notice").textContent =
+              "Saved data could not be read. Import a backup to recover it.";
+        }
+      } catch (e) {
+        storageOK = false;
+      }
+      function save() {
+        try {
+          localStorage.setItem(KEY, JSON.stringify(snacks));
+          $("saved").textContent = "● All changes saved on this device";
+          storageOK = true;
+        } catch (e) {
+          storageOK = false;
+          $("saved").textContent =
+            "Saving unavailable — export a backup to keep your changes.";
+        }
+      }
+      function counts() {
+        $("count").textContent =
+          `${snacks.filter((s) => s.name.trim() && !s.empty).length} bowls ready · ${snacks.filter((s) => s.empty).length} empty · 20 numbers`;
+      }
+      function render() {
+        const g = $("grid");
+        g.replaceChildren();
+        snacks.forEach((s, i) => {
+          const c = document.createElement("article");
+          c.className =
+            "card" +
+            (s.empty ? " empty" : "") +
+            (i === selected ? " selected" : "");
+          const top = document.createElement("div");
+          top.className = "top";
+          const n = document.createElement("span");
+          n.className = "number";
+          n.textContent = String(i + 1).padStart(2, "0");
+          const status = document.createElement("span");
+          status.className = "status";
+          status.textContent = s.empty ? "Empty" : "Available";
+          top.append(n, status);
+          const icon = document.createElement("button");
+          icon.type = "button";
+          icon.className = "emoji";
+          icon.textContent = s.emoji || "🍬";
+          icon.setAttribute("aria-label", `Edit emoji for snack ${i + 1}`);
+          icon.onclick = () => openEmojiEditor(i);
+          const editEmoji = document.createElement("button");
+          editEmoji.type = "button";
+          editEmoji.className = "emoji-edit";
+          editEmoji.textContent = "Edit emoji";
+          editEmoji.onclick = () => openEmojiEditor(i);
+          const input = document.createElement("input");
+          input.className = "name";
+          input.maxLength = 200;
+          input.value = s.name;
+          input.placeholder = "Add a snack…";
+          input.setAttribute("aria-label", `Snack ${i + 1}`);
+          input.addEventListener("input", () => {
+            snacks[i].name = input.value;
+            save();
+            counts();
+          });
+          const b = document.createElement("button");
+          b.className = "claim";
+          b.textContent = s.empty ? "↶ Refill bowl" : "Mark bowl empty";
+          b.onclick = () => {
+            if (!s.empty && !s.name.trim()) {
+              $("notice").textContent = `Add a snack to slot ${i + 1} first.`;
+              input.focus();
+              return;
+            }
+            s.empty = !s.empty;
+            save();
+            render();
+          };
+          c.append(top, icon, editEmoji, input, b);
+          g.append(c);
+        });
+        counts();
+      }
+      let editingEmoji = -1;
+      function openEmojiEditor(i) {
+        editingEmoji = i;
+        $("customEmoji").value = snacks[i].emoji;
+        $("emojiOptions").replaceChildren();
+        [
+          "🍪",
+          "🍬",
+          "🍫",
+          "🍿",
+          "🥨",
+          "🧁",
+          "🍭",
+          "🍩",
+          "🌶️",
+          "🥔",
+          "🍟",
+          "🥜",
+          "🍓",
+          "🍇",
+          "🧀",
+          "🧃",
+          "🥤",
+          "🍰",
+          "🍦",
+          "🍘",
+        ].forEach((emoji) => {
+          const option = document.createElement("button");
+          option.type = "button";
+          option.textContent = emoji;
+          option.setAttribute("aria-label", `Choose ${emoji}`);
+          option.onclick = () => {
+            $("customEmoji").value = emoji;
+          };
+          $("emojiOptions").append(option);
+        });
+        $("emojiDialog").showModal();
+      }
+      $("cancelEmoji").onclick = () => $("emojiDialog").close();
+      $("saveEmoji").onclick = () => {
+        const emoji = $("customEmoji").value.trim();
+        if (!emoji) {
+          $("customEmoji").focus();
+          return;
+        }
+        snacks[editingEmoji].emoji = emoji;
+        save();
+        render();
+        $("emojiDialog").close();
+      };
+      function reveal(n) {
+        if (!Number.isInteger(n) || n < 1 || n > 20) {
+          $("notice").textContent = "Enter a whole number from 1 to 20.";
+          return;
+        }
+        selected = n - 1;
+        render();
+        const s = snacks[selected];
+        $("prizeEmoji").textContent = s.emoji || "🍬";
+        $("prizeNumber").textContent = `YOU ROLLED ${n}`;
+        $("prizeName").textContent = s.name.trim() || "An empty snack slot";
+        $("prizeInfo").textContent = s.empty
+          ? "This bowl is empty. Roll again, or refill the bowl on the board."
+          : s.name.trim()
+            ? "Help yourself! This bowl stays available for the next winner. Mark it empty on the board only when it runs out."
+            : "Add a snack to this number on the board, then reveal it again.";
+        $("win").hidden = s.empty || !s.name.trim();
+        $("dialog").showModal();
+      }
+      $("reveal").onclick = () => reveal(Number($("result").value));
+      $("result").onkeydown = (e) => {
+        if (e.key === "Enter") $("reveal").click();
+      };
+      $("roll").onclick = () => {
+        const a = new Uint32Array(1);
+        let v;
+        do {
+          crypto.getRandomValues(a);
+          v = a[0];
+        } while (v >= 4294967280);
+        const n = (v % 20) + 1;
+        $("result").value = n;
+        reveal(n);
+      };
+      $("close").onclick = () => $("dialog").close();
+      $("win").onclick = () => {
+        $("dialog").close();
+        $("notice").textContent =
+          `Enjoy ${snacks[selected].name}! The bowl is still available 🍬`;
+      };
+      $("reset").onclick = () => {
+        if (
+          confirm("Refill all bowls? Your snack names and emojis will stay.")
+        ) {
+          snacks.forEach((s) => (s.empty = false));
+          selected = -1;
+          save();
+          render();
+        }
+      };
+      $("export").onclick = () => {
+        const blob = new Blob(
+            [JSON.stringify({ version: 2, snacks }, null, 2)],
+            { type: "application/json" },
+          ),
+          url = URL.createObjectURL(blob),
+          a = document.createElement("a");
+        a.href = url;
+        a.download = "snack-quest-backup.json";
+        a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        $("notice").textContent =
+          "Backup downloaded. Keep it somewhere safe for your next game night.";
+      };
+      $("import").onclick = () => $("file").click();
+      $("file").onchange = async () => {
+        const f = $("file").files[0];
+        if (!f) return;
+        try {
+          if (f.size > 100000) throw Error();
+          const data = JSON.parse(await f.text());
+          if (![1, 2].includes(data.version) || !Array.isArray(data.snacks))
+            throw Error();
+          const restored = data.snacks.map((x, i) => ({
+            name: x.name,
+            emoji: x.emoji ?? icons[i],
+            empty: data.version === 1 ? false : x.empty,
+          }));
+          if (!valid(restored)) throw Error();
+          if (confirm("Replace your current board with this backup?")) {
+            snacks = restored;
+            selected = -1;
+            save();
+            render();
+            $("notice").textContent = "Backup restored. Your stash is ready.";
+          }
+        } catch (e) {
+          $("notice").textContent =
+            "That backup is not valid. Choose a Snack Quest JSON export.";
+        } finally {
+          $("file").value = "";
+        }
+      };
+      render();
+      if (!storageOK)
+        $("saved").textContent =
+          "Saving unavailable — export a backup to keep your changes.";
+    </script>
+  </body>
+</html>
